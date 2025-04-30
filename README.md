@@ -1,2 +1,2 @@
 # Online-Psychological-Experiments
-Online Psychological Experiments writen in JsPsycho
+Online Psychological Experiments written in JsPsych
