@@ -861,13 +861,15 @@ function collectParticipantInfo() {
  * 预加载一组图片，并提供加载进度反馈
  *
  * @param {Array<string>} imageUrls - 图片资源的 URL 数组（可以是本地路径、网络地址或 Blob URL）
- * @param {Function} onProgress - 进度回调函数，接收一个表示加载进度的数值参数（0 ~ 1）
+ * @param {Function} onProgress - 进度回调函数，接收一个对象参数 { loaded, total, success, failed }
  * @returns {Promise<void>} 返回一个 Promise，在所有图片加载完成后 resolve
  */
 function preloadImagesWithProgress(imageUrls, onProgress) {
     return new Promise((resolve) => {
-        // 记录已加载完成的图片数量
+        // 记录已加载完成的图片数量（包括成功和失败）
         let loadedCount = 0;
+        let successCount = 0;
+        let failedCount = 0;
 
         // 所有需要加载的图片总数
         const total = imageUrls.length;
@@ -878,41 +880,69 @@ function preloadImagesWithProgress(imageUrls, onProgress) {
             return;
         }
 
+        // 创建一个 Map 来存储加载状态（用于调试）
+        const loadStatus = new Map();
+
         // 遍历所有图片 URL，逐个创建 Image 对象并开始加载
         imageUrls.forEach(url => {
             const img = new Image();
 
             // 设置图片加载成功时的回调函数
             img.onload = () => {
-                loadedCount++;                 // 加载完成计数器加一
-                onProgress(loadedCount / total); // 调用进度回调，传入当前进度比例 (0 ~ 1)
-                
+                loadedCount++;
+                successCount++;
+                loadStatus.set(url, 'success'); // 记录加载成功
+                updateProgress();
+            };
+
+            // 设置图片加载失败时的回调函数
+            img.onerror = () => {
+                loadedCount++;
+                failedCount++;
+                loadStatus.set(url, 'failed'); // 记录加载失败
+                updateProgress();
+            };
+
+            // 更新进度的函数
+            function updateProgress() {
+                onProgress({
+                    loaded: loadedCount,
+                    total: total,
+                    success: successCount,
+                    failed: failedCount,
+                    status: loadStatus
+                });
+
                 // 如果所有图片都已加载完成，则调用 resolve，结束 Promise
                 if (loadedCount === total) {
                     resolve();
                 }
-            };
-
-            // 设置图片加载失败时的回调函数（仍然计入加载完成数）
-            img.onerror = () => {
-                loadedCount++;                 // 即使加载失败也计入完成数
-                onProgress(loadedCount / total); // 更新进度条
-
-                // 如果所有图片都处理完毕（包括失败的情况），也调用 resolve
-                if (loadedCount === total) {
-                    resolve();
-                }
-            };
+            }
 
             // 开始加载图片（设置 src 属性触发加载）
             img.src = url;
+
+            // 如果图片已经缓存（即 img.complete 为 true），立即触发 onload
+            if (img.complete) {
+                img.onload();
+            }
         });
     });
 }
 
-// 示例实验启动函数
-function startExperiment(imgList) {
-    alert(`共预加载 ${imgList.length} 张图片，实验开始！`);
+// 示例：使用预加载函数并启动实验
+async function startExperiment(imgList) {
+    console.log(`共预加载 ${imgList.length} 张图片，开始加载...`);
+
+    // 显示加载进度
+    await preloadImagesWithProgress(imgList, progress => {
+        console.log(
+            `加载进度: ${progress.loaded}/${progress.total}, 成功: ${progress.success}, 失败: ${progress.failed}`
+        );
+    });
+
+    console.log("所有图片加载完成，实验开始！");
+    alert("实验开始！");
 }
 
 /*
