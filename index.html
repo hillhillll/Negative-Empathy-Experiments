@@ -167,7 +167,8 @@
             return new Promise((resolve) => {
                 let startTime = Date.now();
                 let keyListener = (e) => {
-                    if (validKeys.includes(e.code)) {
+                    // 检查是否按下了允许的按键
+                    if (validKeys.includes(e.code) || (e.shiftKey && validKeys.includes(e.code))) {
                         resolve({ e, dur: Date.now() - startTime });
                         document.removeEventListener('keydown', keyListener);
                     }
