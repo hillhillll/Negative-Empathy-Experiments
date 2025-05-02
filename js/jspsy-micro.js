@@ -959,5 +959,97 @@ preloadImagesWithProgress(imageList, progress => {
 */
 
 
+/////////////
+/**
+   * 预加载一组图片，并提供加载进度反馈
+   *
+   * @param {Array<string>} imageUrls - 图片资源的 URL 数组
+   * @param {Function} onProgress - 进度回调函数，接收参数：{ loaded, total, success, failed, status }
+   * @returns {Promise<void>} 所有图片加载完成后 resolve
+   */
+function preloadImagesWithProgress2(imageUrls, onProgress) {
+    return new Promise((resolve) => {
+      let loadedCount = 0;
+      let successCount = 0;
+      let failedCount = 0;
+      const total = imageUrls.length;
+
+      if (total === 0) {
+        resolve();
+        return;
+      }
+
+      const loadStatus = new Map();
+
+      function updateProgress() {
+        const progressData = {
+          loaded: loadedCount,
+          total: total,
+          success: successCount,
+          failed: failedCount,
+          status: loadStatus
+        };
+
+        onProgress(progressData);
+
+        if (loadedCount === total) {
+          setTimeout(resolve, 500); // 给用户一点视觉延迟
+        }
+      }
+
+      imageUrls.forEach(url => {
+        const img = new Image();
+
+        img.onload = () => {
+          loadedCount++;
+          successCount++;
+          loadStatus.set(url, 'success');
+          updateProgress();
+        };
+
+        img.onerror = () => {
+          loadedCount++;
+          failedCount++;
+          loadStatus.set(url, 'failed');
+          updateProgress();
+        };
+
+        if (img.complete && img.naturalWidth !== 0) {
+          // 如果图片已经被缓存，则手动触发 onload
+          img.onload();
+        } else {
+          img.src = url;
+        }
+      });
+    });
+  }
+
+
+/**
+   * 更新页面上的进度条 UI
+   * @param {Object} progress - 包含加载信息的对象
+   */
+function updateLoadingUI(progress) {
+    const percent = Math.round((progress.loaded / progress.total) * 100);
+    const fill = document.getElementById("progress-bar-fill");
+    const text = document.getElementById("loading-text");
+
+    fill.style.width = percent + "%";
+    text.textContent = `正在加载实验资源... ${progress.loaded}/${progress.total}`;
+  }
+
+
+
+  // 示例图片列表（请替换为你的实际图片地址）
+  const imageList = [
+    "images/pic1.jpg",
+    "images/pic2.jpg",
+    "images/pic3.jpg"
+  ];
+
+  // 页面加载后立即启动预加载
+  window.addEventListener("load", () => {
+    startExperiment(imageList);
+  });
 
 
