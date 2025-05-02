@@ -931,7 +931,7 @@ function preloadImagesWithProgress(imageUrls, onProgress) {
 }
 
 // 示例：使用预加载函数并启动实验
-async function startExperiment(imgList) {
+async function startExperiment2(imgList) {
     console.log(`共预加载 ${imgList.length} 张图片，开始加载...`);
 
     // 显示加载进度
@@ -1039,18 +1039,7 @@ function updateLoadingUI(progress) {
   }
 
 
-
-  // 示例图片列表（请替换为你的实际图片地址）
-  const imageList = [
-    "images/pic1.jpg",
-    "images/pic2.jpg",
-    "images/pic3.jpg"
-  ];
-
-  // 页面加载后立即启动预加载
-  window.addEventListener("load", () => {
-    startExperiment(imageList);
-  });
+ 
 
 
 
