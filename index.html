@@ -47,6 +47,25 @@
         <img id="preload-img" src="" alt="preloading..." style="display:none;">
         <div id="preload-text">正在预加载实验图片，请稍候...</div>
     </div>
+   <!-- 自定义 loading 弹窗 -->
+    <div id="loading-alert" style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+    display: none;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    min-width: 200px;
+    ">
+    <!-- 加载文字 -->
+    <p id="loading-alert-text">正在预加载实验图片... 0/0</p>
+    </div>
 
     <div id="mask" class="hidden"></div>
     <div style="background-color: rgb(122, 122, 122); width: 100%; height: 100vh;"></div>
@@ -61,14 +80,14 @@
             '一种是他们处于内心平静、生活安稳的状态；另一种则是他们在经历重大人生变故后深陷悲痛的状态。' + 
             '这些参与者来自不同的背景，但他们都有一个共同点——最近因生活中的一件重大痛苦事件（如失去一位至亲、经历突如其来的分离或面临重大的人生挫折）而承受着巨大的心理压力。' + 
             '为了完成这项研究，我们与每位参与者进行了深入沟通，并获得了他们的同意，用镜头记录下他们在这一特殊时期的真实情感流露。' + 
-            '所有照片均以尊重隐私为前提拍摄，并经过严格筛选，以确保内容的真实性与代表性。' ,            
+            '所有照片均以尊重隐私为前提拍摄，并经过严格筛选，以确保内容的真实性与代表性。<br><br>按空格键继续' ,            
             rest: '本阶段实验结束，请稍作休息。',
             end: '实验结束，浏览器正在下载结果，请稍候......<br>请将结果results.txt文件上传到问卷星。<br>感谢您的参与！',
             stumili: [],
         };
         let instr_page2 = {
             instr: '在第一组照片中，您会看到他们在日常生活中放松、自然的模样，展现出平和与安宁的情绪状态。' + 
-            '而在第二组照片中，您将目睹他们面对亲人离世后的深刻悲痛。从紧绷的眉头到黯淡的眼神，每一个细节都反映了他们内心无法掩饰的伤痛。两组照片将随机呈现。<br><br><br><br>按空格键继续',
+            '而在第二组照片中，您将目睹他们面对痛苦时刻的悲痛情绪。从紧绷的眉头到黯淡的眼神，每一个细节都反映了他们内心无法掩饰的伤痛。两组照片将随机呈现。<br><br><br><br>按空格键继续',
             stumili: [],
         };
         let question = {
@@ -314,6 +333,7 @@
             jspsycho.fillText({ content: instr_page2.instr, class_: ['instr'] });
             await jspsycho.flip();
             await jspsycho.render();
+            jspsycho.putObjToCenter(jspsycho.lastDOM);
             kb = await jspsycho.waitKB(); // 等待按键继续
 
             // 全屏
