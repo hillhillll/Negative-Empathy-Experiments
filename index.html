@@ -237,10 +237,10 @@
             // initJsPsychExperiment();  
         }
 */
-          /**
+  /**
    * 启动实验流程：先预加载图片，再启动 jsPsych 实验
    */
-  async function startExperiment(imgList) {
+   async function startExperiment(imgList) {
     console.log(`共需预加载并渲染 ${imgList.length} 张图片`);
 
     await forcePreloadAndRenderImages(imgList, 300); // 每张图显示 300ms
@@ -257,6 +257,19 @@
     //   }
     // });
   }
+
+
+
+  AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
+
+            
+            // 预加载所有图片
+            const imageList = AllFace.concat(Questions); // 所有刺激 + 所有问题图片
+
+              // 页面加载后启动预加载
+  window.addEventListener("load", () => {
+    startExperiment(imageList);
+  });
 
         ///////////////////////////////////////////////////////////////////////
         // 主实验函数
@@ -294,12 +307,11 @@
             const AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
            */
 
-            AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
-
             
-            // 预加载所有图片
-            const imageList = AllFace.concat(Questions); // 所有刺激 + 所有问题图片
 
+
+
+            /*
             preloadImagesWithProgress(imageList, progress => {
                 console.log(`已加载: ${(progress * 100).toFixed(0)}%`);
                 document.getElementById('loading-progress').innerText =
@@ -309,6 +321,7 @@
                 document.getElementById('loading-screen').style.display = 'none';
                 startExperiment();
             });
+            */
             
 
             ///////////////////////////////////////////////////////////////////////
