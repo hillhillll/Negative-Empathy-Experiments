@@ -1049,9 +1049,10 @@ function updateLoadingUI(progress) {
  *
  * @param {Array<string>} imageUrls - 图片 URL 数组（例如 ["img/1.jpg", "img/2.jpg"]）
  * @param {number} [duration=500] - 每张图片显示的时间（单位：毫秒，默认值为 500ms）
+ * @param {{width: number, height: number}} [imgSize={width: 800, height: 600}] - 控制图片显示的尺寸
  * @returns {Promise<void>} 当所有图片都已成功渲染完成后返回一个 Promise，表示任务完成
  */
-function forcePreloadAndRenderImages(imageUrls, duration = 500) {
+function forcePreloadAndRenderImages(imageUrls, duration = 500, imgSize = { width: 40, height: 50 }) {
     // 返回一个 Promise，方便在加载完成后执行后续操作（如启动实验）
     return new Promise((resolve) => {
       
@@ -1062,6 +1063,10 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500) {
   
       let index = 0;             // 当前正在处理第几张图片
       const total = imageUrls.length; // 总共需要加载多少张图片
+  
+      // 【新增】设置图片显示的宽高
+      imgElement.style.width = `${imgSize.width}px`;
+      imgElement.style.height = `${imgSize.height}px`;
   
       /**
        * 更新进度提示文本的函数
@@ -1128,4 +1133,69 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500) {
       showNextImage();
     });
   }
+
+
+  /**
+ * 在后台预加载一组图片而不显示在页面上，确保资源被缓存
+ *
+ * @param {Array<string>} imageUrls - 图片 URL 数组
+ * @param {Function} [onProgress] - 可选的进度回调函数，接收参数：{ loaded, total, success, failed }
+ * @returns {Promise<void>} 所有图片加载完成后 resolve
+ */
+function backgroundLoadImages(imageUrls, onProgress) {
+    return new Promise((resolve) => {
+        let loadedCount = 0;
+        let successCount = 0;
+        let failedCount = 0;
+        const total = imageUrls.length;
+
+        if (total === 0) {
+            resolve();
+            return;
+        }
+
+        // 每次加载完一张图，就调用 updateProgress 来通知外部
+        function updateProgress() {
+            const progressData = {
+                loaded: loadedCount,
+                total: total,
+                success: successCount,
+                failed: failedCount
+            };
+
+            if (typeof onProgress === 'function') {
+                onProgress(progressData);
+            }
+
+            // 如果所有图片都已加载完成，就 resolve Promise
+            if (loadedCount === total) {
+                setTimeout(resolve, 300); // 留一点缓冲时间
+            }
+        }
+
+        // 遍历所有图片 URL，逐个创建 Image 对象并加载
+        imageUrls.forEach(url => {
+            const img = new Image(); // 创建一个内存中的图片对象（不会显示在页面上）
+
+            img.onload = () => {
+                loadedCount++;
+                successCount++;
+                img = null; // 清除引用，帮助垃圾回收
+                updateProgress();
+            };
+
+            img.onerror = () => {
+                loadedCount++;
+                failedCount++;
+                img = null;
+                updateProgress();
+            };
+
+            // 开始加载图片
+            img.src = url;
+        });
+    });
+}
+
+
 
