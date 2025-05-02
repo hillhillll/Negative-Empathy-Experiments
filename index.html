@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/global.css">
-    <title>DEMO- Experiment</title>
+    <title>Experiment 1: Negative Empathy</title>
     <style>
         /* 预加载图片的容器 */
         #preload-container {
@@ -107,15 +107,7 @@
             stumili: [],
         };
 
-        const questionImg = [
-                'imgs/N1_cognitive_empathy_negative.jpg',
-                'imgs/N2_affective_empathy_negative.jpg',
-                'imgs/N3_prosocial_conform.jpg',
-                'imgs/N4_prosocial_help.jpg',
-                'imgs/N5_prosocial_donate_negative.jpg',
-                'imgs/N6_cognitive_similarity.jpg',
-                'imgs/N7_IOS.jpg'
-            ];
+        const questionImg = QuestionsN; // 问题图片列表
 
         // 从给定数组中随机抽取一定的元素，元素位置不相邻
         function getTargetIdx(arr_len, n) {
@@ -264,7 +256,7 @@
         AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
                    
         // 预加载所有图片
-        const imageList = AllFace.concat(Questions); // 所有刺激 + 所有问题图片
+        const imageList = AllFace.concat(questionImg); // 所有刺激 + 所有问题图片
 
         // 页面加载后启动预加载
         window.addEventListener("load", () => {
