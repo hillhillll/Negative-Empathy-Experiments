@@ -1053,3 +1053,90 @@ function updateLoadingUI(progress) {
   });
 
 
+
+
+/**
+ * 强制预加载并渲染一组图片：逐个显示图片以触发浏览器缓存
+ *
+ * @param {Array<string>} imageUrls - 图片 URL 数组（例如 ["img/1.jpg", "img/2.jpg"]）
+ * @param {number} [duration=500] - 每张图片显示的时间（单位：毫秒，默认值为 500ms）
+ * @returns {Promise<void>} 当所有图片都已成功渲染完成后返回一个 Promise，表示任务完成
+ */
+function forcePreloadAndRenderImages(imageUrls, duration = 500) {
+    // 返回一个 Promise，方便在加载完成后执行后续操作（如启动实验）
+    return new Promise((resolve) => {
+      
+      // 获取 HTML 中的元素：
+      const container = document.getElementById("preload-container"); // 全屏容器
+      const imgElement = document.getElementById("preload-img");       // 图片标签
+      const textElement = document.getElementById("preload-text");     // 进度文本
+  
+      let index = 0;             // 当前正在处理第几张图片
+      const total = imageUrls.length; // 总共需要加载多少张图片
+  
+      /**
+       * 更新进度提示文本的函数
+       * 显示当前加载的图片序号，如："正在预加载实验图片... 2/10"
+       */
+      function updateProgress() {
+        textElement.textContent = `正在预加载实验图片... ${index + 1}/${total}`;
+      }
+  
+      /**
+       * 递归函数：显示下一张图片
+       * 使用递归方式依次加载并显示每张图片
+       */
+      function showNextImage() {
+        
+        // 如果已经处理完所有图片，则隐藏加载界面，并 resolve Promise 表示完成
+        if (index >= imageUrls.length) {
+          container.style.display = "none"; // 隐藏全屏加载界面
+          return resolve();                 // 所有图片加载完成，Promise 完成
+        }
+  
+        // 获取当前图片的 URL
+        const url = imageUrls[index];
+  
+        // 显示图片容器（原本可能是隐藏的）
+        imgElement.style.display = "block";
+  
+        // 设置图片的 src 属性，开始加载图片
+        imgElement.src = url;
+  
+        /**
+         * 当图片加载成功时执行的回调函数
+         * 确保图片完全加载后再继续下一张
+         */
+        imgElement.onload = () => {
+          index++;                     // 图片计数加一
+          updateProgress();            // 更新进度提示文字
+  
+          // 在指定的持续时间后隐藏当前图片，并递归调用显示下一张
+          setTimeout(() => {
+            imgElement.style.display = "none"; // 隐藏当前图片
+            showNextImage();                   // 继续显示下一张图片
+          }, duration);
+        };
+  
+        /**
+         * 如果图片加载失败，也继续处理下一张图片
+         * 并在控制台打印警告信息
+         */
+        imgElement.onerror = () => {
+          console.warn(`图片加载失败: ${url}`); // 输出错误信息
+          index++;                               // 即使失败也计入总数
+          updateProgress();                      // 更新进度提示
+  
+          // 同样等待一段时间后继续下一张
+          setTimeout(() => {
+            imgElement.style.display = "none";   // 隐藏当前图片
+            showNextImage();                     // 显示下一张图片
+          }, duration);
+        };
+      }
+  
+      // 从第一张图片开始加载和显示
+      showNextImage();
+    });
+  }
+
