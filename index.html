@@ -7,11 +7,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/global.css">
     <title>DEMO- Experiment</title>
+    <style>
+        /* 进度条样式 */
+        #loading-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+          font-family: Arial, sans-serif;
+          text-align: center;
+        }
+    
+        #progress-bar {
+          width: 60%;
+          height: 30px;
+          background-color: #f3f3f3;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          overflow: hidden;
+        }
+    
+        #progress-bar-fill {
+          height: 100%;
+          width: 0%;
+          background-color: #4caf50;
+          transition: width 0.3s ease;
+        }
+    
+        #loading-text {
+          margin-top: 15px;
+          font-size: 18px;
+        }
+      </style>
 </head>
 
 <body>
     <div class="exp-wrap">
         <div id="exp"></div>
+    </div>
+    <!-- 加载界面 -->
+    <div id="loading-container">
+        <div id="progress-bar">
+        <div id="progress-bar-fill"></div>
+        </div>
+        <div id="loading-text">正在加载实验资源... 0/0</div>
     </div>
     <div id="mask" class="hidden"></div>
     <div style="background-color: rgb(122, 122, 122); width: 100%; height: 100vh;"></div>
@@ -182,6 +228,26 @@
             });
         }
 
+          /**
+         * 启动实验前的预加载流程
+         * @param {Array<string>} imgList - 图片路径数组
+         */
+        async function startExperiment(imgList) {
+            console.log(`共需预加载 ${imgList.length} 张图片`);
+
+            // 开始预加载图片
+            await preloadImagesWithProgress2(imgList, updateLoadingUI);
+
+            // 所有图片加载完成后，隐藏加载界面
+            const loadingContainer = document.getElementById("loading-container");
+            loadingContainer.style.display = "none";
+
+            console.log("所有图片已加载完成，实验即将开始！");
+            alert("实验开始！");
+            // 在这里调用 jsPsych.init() 启动实验
+            // initJsPsychExperiment();  
+        }
+
         ///////////////////////////////////////////////////////////////////////
         // 主实验函数
         ///////////////////////////////////////////////////////////////////////
@@ -208,7 +274,7 @@
             await jspsycho.flip();
             await jspsycho.render();
             jspsycho.putObjToCenter(jspsycho.lastDOM);          
-           
+           /*
             const Neutral_Face = [
                 'imgs/CH_N_F_02.jpg'
             ];
@@ -216,8 +282,9 @@
                 'imgs/CH_P_F_02.jpg'
             ];
             const AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
-           
-            //AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
+           */
+
+            AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
 
             
             // 预加载所有图片
