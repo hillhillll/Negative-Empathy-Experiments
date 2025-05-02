@@ -58,8 +58,8 @@ var Happy_Face = [
     'imgs/CH_H_M_08.jpg'
 ];
 
-// Questions 
-var Questions = [
+// Negative Empathy Questions 
+var QuestionsN = [
     'imgs/N1_cognitive_empathy_negative.jpg',
     'imgs/N2_affective_empathy_negative.jpg',
     'imgs/N3_prosocial_conform.jpg',
@@ -67,6 +67,18 @@ var Questions = [
     'imgs/N5_prosocial_donate_negative.jpg',
     'imgs/N6_cognitive_similarity.jpg',
     'imgs/N7_IOS.jpg'
+];
+
+// Positive Empathy Questions 
+var QuestionsP = [
+    'imgs/P1_cognitive_empathy_positive.jpg',
+    'imgs/P2_affective_empathy_positive.jpg',
+    'imgs/P3_prosocial_zhuhe.jpg',
+    'imgs/P4_prosocial_cooperation.jpg',
+    'imgs/P5_prosocial_help.jpg',
+    'imgs/P6_prosocial_donate_positive.jpg',
+    'imgs/P7_cognitive_similarity.jpg',
+    'imgs/P8_IOS.jpg'
 ];
 
 face_pair = [
