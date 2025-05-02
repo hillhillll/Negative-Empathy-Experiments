@@ -243,7 +243,7 @@
    async function startExperiment(imgList) {
     console.log(`共需预加载并渲染 ${imgList.length} 张图片`);
 
-    await forcePreloadAndRenderImages(imgList, 300); // 每张图显示 300ms
+    await forcePreloadAndRenderImages(imgList, 10); // 每张图显示 300ms
 
     console.log("所有图片已成功渲染并缓存！");
     alert("实验即将开始！");
@@ -265,6 +265,7 @@
             
             // 预加载所有图片
             const imageList = AllFace.concat(Questions); // 所有刺激 + 所有问题图片
+
 
               // 页面加载后启动预加载
   window.addEventListener("load", () => {
