@@ -1074,7 +1074,7 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500, imgSize = { widt
        * 显示当前加载的图片序号，如："正在预加载实验图片... 2/10"
        */
       function updateProgress() {
-        const msg = `正在预加载实验图片... ${index + 1}/${total}`;
+        const msg = `正在预加载实验图片，网速略慢，请稍候... ${index + 1}/${total}`;
         textElement.textContent = msg;
       }
   
