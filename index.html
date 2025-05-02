@@ -217,60 +217,40 @@
             });
         }
 
-          /**
-         * 启动实验前的预加载流程
-         * @param {Array<string>} imgList - 图片路径数组
-         
+        /**
+         * 启动实验流程：先预加载图片，再启动 jsPsych 实验
+         */
         async function startExperiment(imgList) {
-            console.log(`共需预加载 ${imgList.length} 张图片`);
+            console.log(`共需预加载并渲染 ${imgList.length} 张图片`);
 
-            // 开始预加载图片
-            await preloadImagesWithProgress2(imgList, updateLoadingUI);
+            await forcePreloadAndRenderImages(imgList, 10); // 每张图显示 300ms
 
-            // 所有图片加载完成后，隐藏加载界面
-            const loadingContainer = document.getElementById("loading-container");
-            loadingContainer.style.display = "none";
-
-            console.log("所有图片已加载完成，实验即将开始！");
-            alert("实验开始！");
-            // 在这里调用 jsPsych.init() 启动实验
-            // initJsPsychExperiment();  
-        }
-*/
-  /**
-   * 启动实验流程：先预加载图片，再启动 jsPsych 实验
-   */
-   async function startExperiment(imgList) {
-    console.log(`共需预加载并渲染 ${imgList.length} 张图片`);
-
-    await forcePreloadAndRenderImages(imgList, 10); // 每张图显示 300ms
-
-    console.log("所有图片已成功渲染并缓存！");
-    alert("实验即将开始！");
-    
-    // 此处调用你的 jsPsych 初始化函数
-    // jspsych.init({
-    //   timeline: yourTimeline,
-    //   default_iti: 500,
-    //   on_finish: () => {
-    //     jspsych.data.displayData();
-    //   }
-    // });
-  }
-
-
-
-  AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
-
+            console.log("所有图片已成功渲染并缓存！");
+            alert("实验即将开始！");
             
-            // 预加载所有图片
-            const imageList = AllFace.concat(Questions); // 所有刺激 + 所有问题图片
+            // 此处调用你的 jsPsych 初始化函数
+            // jspsych.init({
+            //   timeline: yourTimeline,
+            //   default_iti: 500,
+            //   on_finish: () => {
+            //     jspsych.data.displayData();
+            //   }
+            // });
+        }
 
 
-              // 页面加载后启动预加载
-  window.addEventListener("load", () => {
-    startExperiment(imageList);
-  });
+        ///////////////////////////////////////////////////////////////////////
+        // 图片预加载
+        ///////////////////////////////////////////////////////////////////////
+        AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
+                   
+        // 预加载所有图片
+        const imageList = AllFace.concat(Questions); // 所有刺激 + 所有问题图片
+
+        // 页面加载后启动预加载
+        window.addEventListener("load", () => {
+            startExperiment(imageList);
+        });
 
         ///////////////////////////////////////////////////////////////////////
         // 主实验函数
@@ -306,11 +286,7 @@
                 'imgs/CH_P_F_02.jpg'
             ];
             const AllFace = Neutral_Face.concat(Painful_Face); // 所有刺激
-           */
-
-            
-
-
+           */       
 
             /*
             preloadImagesWithProgress(imageList, progress => {
@@ -322,8 +298,7 @@
                 document.getElementById('loading-screen').style.display = 'none';
                 startExperiment();
             });
-            */
-            
+            */          
 
             ///////////////////////////////////////////////////////////////////////
             // 显示指导语
