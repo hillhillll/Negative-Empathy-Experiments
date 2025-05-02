@@ -170,7 +170,7 @@
             await jspsycho.render();
 
             // 固定呈现时间（例如 1000 毫秒，即 1 秒）
-            await jspsycho.waitMiSec(20); // 等待 1 秒
+            await jspsycho.waitMiSec(2000); // 等待 2 秒
 
             // 清空屏幕
             await jspsycho.flip();
@@ -196,7 +196,7 @@
                 // 收集被试的按键反应和反应时间
                 const validKeys = ['Digit0', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9',
                             'Numpad0', 'Numpad1', 'Numpad2', 'Numpad3', 'Numpad4', 'Numpad5', 'Numpad6', 'Numpad7', 'Numpad8', 'Numpad9','KeyP', 'Space']; // 允许的按键
-                const response = await waitPressKeyAndMs(10, validKeys); // 最多等待 10 秒
+                const response = await waitPressKeyAndMs(10000, validKeys); // 最多等待 10 秒
 
                 // 记录回答和反应时间
                 results.push({
@@ -242,7 +242,7 @@
         async function startExperiment(imgList) {
             console.log(`共需预加载并渲染 ${imgList.length} 张图片`);
 
-            await forcePreloadAndRenderImages(imgList, 10); // 每张图显示 300ms
+            await forcePreloadAndRenderImages(imgList, 10); // 每张图显示 10ms
 
             console.log("所有图片已成功渲染并缓存！");
             alert("实验即将开始！");
