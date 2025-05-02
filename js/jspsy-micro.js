@@ -1040,10 +1040,6 @@ function updateLoadingUI(progress) {
 
 
  
-
-
-
-
 /**
  * 强制预加载并渲染一组图片：逐个显示图片以触发浏览器缓存
  *
@@ -1056,10 +1052,15 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500, imgSize = { widt
     // 返回一个 Promise，方便在加载完成后执行后续操作（如启动实验）
     return new Promise((resolve) => {
       
+
       // 获取 HTML 中的元素：
       const container = document.getElementById("preload-container"); // 全屏容器
       const imgElement = document.getElementById("preload-img");       // 图片标签
       const textElement = document.getElementById("preload-text");     // 进度文本
+
+      // 【新增】获取遮罩层
+      //const overlay = document.getElementById("overlay");
+
   
       let index = 0;             // 当前正在处理第几张图片
       const total = imageUrls.length; // 总共需要加载多少张图片
@@ -1073,7 +1074,8 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500, imgSize = { widt
        * 显示当前加载的图片序号，如："正在预加载实验图片... 2/10"
        */
       function updateProgress() {
-        textElement.textContent = `正在预加载实验图片... ${index + 1}/${total}`;
+        const msg = `正在预加载实验图片... ${index + 1}/${total}`;
+        textElement.textContent = msg;
       }
   
       /**
@@ -1085,6 +1087,7 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500, imgSize = { widt
         // 如果已经处理完所有图片，则隐藏加载界面，并 resolve Promise 表示完成
         if (index >= imageUrls.length) {
           container.style.display = "none"; // 隐藏全屏加载界面
+          //overlay.style.display = "none"; // 【新增】加载完成后隐藏遮罩层
           return resolve();                 // 所有图片加载完成，Promise 完成
         }
   
@@ -1111,7 +1114,7 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500, imgSize = { widt
             showNextImage();                   // 继续显示下一张图片
           }, duration);
         };
-  
+
         /**
          * 如果图片加载失败，也继续处理下一张图片
          * 并在控制台打印警告信息
@@ -1131,9 +1134,11 @@ function forcePreloadAndRenderImages(imageUrls, duration = 500, imgSize = { widt
   
       // 从第一张图片开始加载和显示
       showNextImage();
+
     });
   }
 
+  
 
   /**
  * 在后台预加载一组图片而不显示在页面上，确保资源被缓存
